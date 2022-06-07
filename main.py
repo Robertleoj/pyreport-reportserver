@@ -16,9 +16,6 @@ class ReportResponse(BaseModel):
 @app.post('/run_report', response_class=JSONResponse)
 async def report_getter(param: ReportReq):
     report_code = param.report_code
-    html_text = run_report(report_code)
-    # print("================= HTML TEXT ===================")
-    # print(html_text)
-    # print("================= HTML TEXT ===================")
+    html_text = await run_report(report_code)
     res = ReportResponse(html=html_text)
     return JSONResponse(content=jsonable_encoder(res))

@@ -1,12 +1,4 @@
-import uuid
-import datapane
-import os
-
-
-REPORT_DATA_DIR = 'report_data'
-REPORT_DIR = f'{REPORT_DATA_DIR}.reports'
-TMP_DIR = f'./report_data/tmp'
-
+import asyncio
 
 FAIL_HTML = """
 <div>
@@ -15,28 +7,51 @@ FAIL_HTML = """
 <div>
 """
 
+DOCKER_CMD = 'docker run --rm -i report-runner python'
 
-def get_report_obj(report_code):
-    # if "def make_report()" not in report_code:
-        # raise ValueError("Must declare get_report() function")
-    print(report_code)
-    exec(report_code, None, locals())
-    report = locals().get('make_report')()
-    return report
+async def run_report_code(report_code: bytes):
+    proc = await asyncio.create_subprocess_shell(
+        DOCKER_CMD,
+        stdin=asyncio.subprocess.PIPE,
+        stdout= asyncio.subprocess.PIPE,
+        stderr= asyncio.subprocess.PIPE
+    )
+
+    # stdout, stderr = await proc.communicate(report_code.encode('utf-8'))
+    stdout, stderr = await proc.communicate(report_code)
+    return stdout.decode(), stderr.decode(), proc.returncode
 
 
-def run_report(report_code):
-    try:
-        report_obj = get_report_obj(report_code)
-        html_text = report_obj.get_html('rep')
-        return str(html_text)
-
-    except BaseException as err:
-        return FAIL_HTML.format(reason=str(err))
+async def run_report(report_code: str):
+    stdout, stderr, returncode = await run_report_code(report_code.encode('utf-8'))
+    if returncode:
+        return FAIL_HTML.format(reason=stderr)
+    else:
+        return stdout
 
 
 if __name__ == "__main__":
-    print(run_report("12f97cef71794a0f3f2c7bd4"))
+    code = """
+def get_report():
+    import numpy as np
+    import datapane as dp
+    import pandas as pd
+    
+    data = pd.DataFrame(np.linspace(0, 100, 100))
+    
+    return dp.Report(data)
+    
+print(get_report().get_html('a'))
+    """.encode('utf-8')
+
+    async def main(code):
+        res = await run_report(code)
+        print(res)
+
+    loop = asyncio.get_event_loop()
+    asyncio.ensure_future(main(code))
+    loop.run_forever()
+    loop.close()
 
     
 
