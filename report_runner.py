@@ -40,23 +40,25 @@ def run_report(report_id):
     # print(report_obj)
     tmp_id = str(uuid.uuid4())
 
-    tmp_html_filename = f'{TMP_DIR}/{tmp_id}.html'
+    # tmp_html_filename = f'{TMP_DIR}/{tmp_id}.html'
 
-    report_obj.save(tmp_html_filename)
+    html_text = report_obj.get_html('rep')
 
-    with open(tmp_html_filename, 'r') as f:
-        html_text = f.read()
+    # with open(tmp_html_filename, 'r') as f:
+        # html_text = f.read()
 
-    os.remove(tmp_html_filename)
+    # os.remove(tmp_html_filename)
     # print(html_text)
     return str(html_text)
 
     # except BaseException as err:
-        # return FAIL_HTML.format(reason=str(err))
+    #     return FAIL_HTML.format(reason=str(err))
 
 
 if __name__ == "__main__":
-    print(run_report("629e4684d1a64a4879ba233b"))
+    print(run_report("12f97cef71794a0f3f2c7bd4"))
+
+    
 
 
 

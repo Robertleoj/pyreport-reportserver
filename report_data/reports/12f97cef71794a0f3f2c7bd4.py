@@ -1,5 +1,6 @@
 
 def make_report():
+
     import pandas as pd
     import altair as alt
     import datapane as dp
@@ -23,5 +24,3 @@ def make_report():
         dp.Plot(plot, caption="Vaccinations by manufacturer over time"),
         dp.Table(total_styled, caption="Current vaccination totals by manufacturer")
     )
-
-# report = make_report()
