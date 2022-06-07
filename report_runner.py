@@ -16,43 +16,23 @@ FAIL_HTML = """
 """
 
 
-def get_report_path(report_id):
-    return f'{REPORT_DIR}.{report_id}'
+def get_report_obj(report_code):
+    # if "def make_report()" not in report_code:
+        # raise ValueError("Must declare get_report() function")
+    print(report_code)
+    exec(report_code, None, locals())
+    report = locals().get('make_report')()
+    return report
 
 
-def import_report(report_id):
-    # rep_path = get_report_path(report_id)
-    module = __import__(get_report_path(report_id), fromlist=['make_report'])
-    print(f'{module=}')
-    return getattr(module, 'make_report')()
+def run_report(report_code):
+    try:
+        report_obj = get_report_obj(report_code)
+        html_text = report_obj.get_html('rep')
+        return str(html_text)
 
-    # module= import_module(REPORT_DIR, f'{report_id}.py')
-    # return getattr(module, 'report')
-    # spec.loader.exec_module(report)
-    # print(f'{rep_path=}')
-
-    # return importName(get_report_path(report_id), 'report')
-
-
-def run_report(report_id):
-    # try:
-    report_obj: datapane.Report = import_report(report_id)
-    # print(report_obj)
-    tmp_id = str(uuid.uuid4())
-
-    # tmp_html_filename = f'{TMP_DIR}/{tmp_id}.html'
-
-    html_text = report_obj.get_html('rep')
-
-    # with open(tmp_html_filename, 'r') as f:
-        # html_text = f.read()
-
-    # os.remove(tmp_html_filename)
-    # print(html_text)
-    return str(html_text)
-
-    # except BaseException as err:
-    #     return FAIL_HTML.format(reason=str(err))
+    except BaseException as err:
+        return FAIL_HTML.format(reason=str(err))
 
 
 if __name__ == "__main__":

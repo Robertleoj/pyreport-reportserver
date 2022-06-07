@@ -6,7 +6,7 @@ from report_runner import run_report
 
 
 class ReportReq(BaseModel):
-    report_id: str
+    report_code: str
 
 app = FastAPI()
 
@@ -15,8 +15,8 @@ class ReportResponse(BaseModel):
 
 @app.post('/run_report', response_class=JSONResponse)
 async def report_getter(param: ReportReq):
-    report_id = param.report_id
-    html_text = run_report(report_id)
+    report_code = param.report_code
+    html_text = run_report(report_code)
     # print("================= HTML TEXT ===================")
     # print(html_text)
     # print("================= HTML TEXT ===================")
