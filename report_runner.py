@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 FAIL_HTML = """
 <div>
@@ -7,9 +8,10 @@ FAIL_HTML = """
 <div>
 """
 
-DOCKER_CMD = 'docker run --rm -i report-runner python'
+DOCKER_CMD = 'docker run --rm -i report-runner'
 
 async def run_report_code(report_code: bytes):
+
     proc = await asyncio.create_subprocess_shell(
         DOCKER_CMD,
         stdin=asyncio.subprocess.PIPE,
@@ -27,7 +29,7 @@ async def run_report(report_code: str):
     if returncode:
         return FAIL_HTML.format(reason=stderr)
     else:
-        return stdout
+        return json.loads(stdout)
 
 
 if __name__ == "__main__":
