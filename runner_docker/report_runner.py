@@ -69,19 +69,20 @@ stdout = mystdout.getvalue()
 
 att_items = []
 
-for i, a in enumerate(attachments):
-    # print(f'================= ATTACHMENT {i} ==============')
-    # print(a)
-    # print(f'{guess_type(a)=}')
-    with open(a, 'rb') as f:
-        mimetype = guess_type(a)
-        content = b64encode(f.read()).decode('utf-8')
-        att_items.append({
-            'mimetype': mimetype,
-            'file': content
-        })
+if(attachments):
+    for i, a in enumerate(attachments):
+        # print(f'================= ATTACHMENT {i} ==============')
+        # print(a)
+        # print(f'{guess_type(a)=}')
+        with open(a, 'rb') as f:
+            mimetype = guess_type(a)
+            content = b64encode(f.read()).decode('utf-8')
+            att_items.append({
+                'mimetype': mimetype,
+                'file': content
+            })
 
-    # print('===================================')
+        # print('===================================')
 
 ret_obj = {
     'stdout': stdout,

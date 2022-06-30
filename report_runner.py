@@ -26,10 +26,15 @@ async def run_report_code(report_code: bytes):
 
 async def run_report(report_code: str):
     stdout, stderr, returncode = await run_report_code(report_code.encode('utf-8'))
+
     if returncode:
         return FAIL_HTML.format(reason=stderr)
     else:
         return json.loads(stdout)
+    # j= json.loads(stdout)
+    j['stderr'] = stderr
+    return j
+    
 
 
 if __name__ == "__main__":
